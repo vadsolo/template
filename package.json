@@ -2,19 +2,31 @@
   "name": "@vadsolo/template",
   "version": "1.0.0",
   "description": "Template generator for Web Apps",
-  "main": "src/cli.js",
+  "main": "lib/index.js",
   "bin": {
-    "@vadsolo/template": "bin/run"
+    "template": "bin/run"
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepack": "rimraf lib && tsc -b"
   },
   "author": "vadsolo",
   "license": "ISC",
   "dependencies": {
-    "esm": "^3.2.25"
-  }
+    "arg": "^5.0.0",
+    "inquirer": "^7.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.9",
+    "rimraf": "^3.0.2",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.1.2"
+  },
+  "files": [
+    "/bin",
+    "/lib"
+  ],
+  "types": "lib/index.d.ts"
 }
