@@ -3,10 +3,10 @@
 const fs = require("fs");
 const path = require("path");
 const project = path.join(__dirname, "../tsconfig.json");
-const dev = fs.existsSync(project);
+// const dev = fs.existsSync(project);
 require = require("esm")(module /*, options*/);
-if (dev) {
-  require("ts-node").register({ project });
-}
+// if (dev) {
+//   require("ts-node").register({ project });
+// }
 
-require(`../${dev ? "src" : "lib"}`).cli(process.argv);
+require(`../lib`).cli(process.argv);
