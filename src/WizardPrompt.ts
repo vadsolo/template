@@ -6,8 +6,10 @@ import {
   StaticConfig,
   reactWizardChoices,
   nodeWizardChoices,
+  staticWizardChoices,
   GeneralTemplates,
   UIKits,
+  RenderMethods,
   StateManagement,
   WizardConfig,
 } from "./Options";
@@ -69,12 +71,14 @@ export class WizardPrompt {
     const { react_answers } = await this.prompt({
       type: "checkbox",
       name: "react_answers",
-      message: "⚙️ React Additional Options",
+      message: "React Additional Options",
       choices: [...reactWizardChoices, new inquirer.Separator()],
     });
 
     // Generate Config Object from propmpt answers
-    const reactConfig: ReactConfig = this.generateConfig(react_answers);
+    const reactConfig: ReactConfig = this.generateConfigFromAnswers(
+      react_answers
+    );
 
     // If Custom UI Kit selected - propmt which one to use and assign it to property
 
@@ -82,7 +86,7 @@ export class WizardPrompt {
       const { ui_kit_answer } = await this.prompt({
         type: "list",
         name: "ui_kit_answer",
-        message: "🎨 Choose UI Kit you want to use",
+        message: "✨Choose UI Kit you want to use",
         choices: Object.values(UIKits),
       });
 
@@ -95,7 +99,7 @@ export class WizardPrompt {
       const { state_answer } = await this.prompt({
         type: "list",
         name: "state_answer",
-        message: "⚡ Choose State Management Approach",
+        message: "⚡Choose State Management Approach",
         choices: Object.values(StateManagement),
       });
 
@@ -111,27 +115,52 @@ export class WizardPrompt {
     const { node_answers } = await this.prompt({
       type: "checkbox",
       name: "node_answers",
-      message: "⚙️ Please choose Nodejs additional options",
+      message: "Please choose Nodejs additional options",
       choices: [...nodeWizardChoices, new inquirer.Separator()],
     });
 
     // Generate Config Object from propmpt answers
-    const nodeConfig: NodeConfig = this.generateConfig(node_answers);
+    const nodeConfig: NodeConfig = this.generateConfigFromAnswers(node_answers);
 
+    if (!!nodeConfig.render_method) {
+      const { render_answer } = await this.prompt({
+        type: "list",
+        name: "render_answer",
+        message: "How NodeJS should handle * render route",
+        choices: Object.values(RenderMethods),
+      });
+      nodeConfig.render_method = render_answer;
+    }
     this.config.nodeConfig = nodeConfig;
     return;
   }
 
-  private async staticWizard() {}
+  private async staticWizard(): Promise<void> {
+    // Get answers for additional NodeJS options
+    const { static_answers } = await this.prompt({
+      type: "checkbox",
+      name: "static_answers",
+      message: "Please choose Static Web Site additional options",
+      choices: [...staticWizardChoices, new inquirer.Separator()],
+    });
 
-  private async fullstackWizard() {
+    // Generate Config Object from propmpt answers
+    const staticConfig: StaticConfig = this.generateConfigFromAnswers(
+      static_answers
+    );
+
+    this.config.staticConfig = staticConfig;
+    return;
+  }
+
+  private async fullstackWizard(): Promise<void> {
     await this.reactWizard();
     await this.nodejsWizard();
 
     // Maybe Some Additional Fullstack Settings
   }
 
-  private generateConfig(
+  private generateConfigFromAnswers(
     answers: string[]
   ): ReactConfig | NodeConfig | StaticConfig {
     return answers.reduce((obj: { [key: string]: boolean }, item) => {
@@ -139,6 +168,7 @@ export class WizardPrompt {
       return obj;
     }, {});
   }
+
   private prompt(questions: QuestionCollection) {
     return inquirer.prompt(questions);
   }

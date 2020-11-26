@@ -7,7 +7,7 @@ export declare class WizardPrompt {
     private nodejsWizard;
     private staticWizard;
     private fullstackWizard;
-    private generateConfig;
+    private generateConfigFromAnswers;
     private prompt;
     get getConfig(): WizardConfig;
 }

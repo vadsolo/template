@@ -41,12 +41,17 @@ export declare const reactWizardChoices: ({
     value: string;
     checked?: undefined;
 })[];
+export declare enum RenderMethods {
+    React = "Add React Build In Public folder",
+    Static = "Static HTML render in public folder"
+}
 export interface NodeConfig {
     typescript?: boolean;
     tests?: boolean;
     auth_middleware?: boolean;
     axios?: boolean;
     git?: boolean;
+    render_method?: RenderMethods;
 }
 export declare const nodeWizardChoices: ({
     name: string;
@@ -58,7 +63,19 @@ export declare const nodeWizardChoices: ({
     checked?: undefined;
 })[];
 export interface StaticConfig {
+    sass?: boolean;
+    javascript?: boolean;
+    git?: boolean;
 }
+export declare const staticWizardChoices: ({
+    name: string;
+    checked: boolean;
+    value: string;
+} | {
+    name: string;
+    value: string;
+    checked?: undefined;
+})[];
 export interface WizardConfig {
     defaultConfig?: DefaultArgOptions;
     reactConfig?: ReactConfig;
