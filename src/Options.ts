@@ -1,3 +1,10 @@
+export enum WizardStatus {
+  INIT,
+  STARTED,
+  ABORTED,
+  COMPLETED,
+}
+
 // ===== Command Line =====
 export interface DefaultArgOptions {
   skipPrompts: boolean;
@@ -40,23 +47,23 @@ export interface ReactConfig {
 }
 
 export const reactWizardChoices = [
-  { name: "⚡Typescript", checked: true, value: "typescript" },
-  { name: "⚡Next JS", checked: true, value: "nextjs" },
-  { name: "⚡Global State", value: "state_management" },
-  { name: "✨Styled Components", checked: true, value: "styled_components" },
-  { name: "✨Custom UI Kit", checked: true, value: "uikit" },
-  { name: "⚙️Storybook", checked: true, value: "storybook" },
-  { name: "⚙️Unit Tests", checked: true, value: "tests" },
-  { name: "⚙️Eslint", value: "eslint" },
-  { name: "⚙️Axios", value: "axios" },
-  { name: "⚙️Git Repo", value: "git" },
+  { title: "⚡Typescript", selected: true, value: "typescript" },
+  { title: "⚡Next JS", selected: true, value: "nextjs" },
+  { title: "⚡Global State", value: "state_management" },
+  { title: "✨Styled Components", selected: true, value: "styled_components" },
+  { title: "✨Custom UI Kit", selected: true, value: "uikit" },
+  { title: "⚙️Storybook", selected: true, value: "storybook" },
+  { title: "⚙️Unit Tests", selected: true, value: "tests" },
+  { title: "⚙️Eslint", value: "eslint" },
+  { title: "⚙️Axios", value: "axios" },
+  { title: "⚙️Git Repo", value: "git" },
 ];
 
 // ===== NODEJS ======
 
 export enum RenderMethods {
-  React = "Add React Build In Public folder",
-  Static = "Static HTML render in public folder",
+  React = "Serving Built React App from Public folder",
+  Static = "Service Static HTML from public folder",
 }
 
 export interface NodeConfig {
@@ -69,12 +76,20 @@ export interface NodeConfig {
 }
 
 export const nodeWizardChoices = [
-  { name: "⚡Typescript", checked: true, value: "typescript" },
-  { name: "⚡Add Auth Middleware & Controller", value: "auth_middleware" },
-  { name: "⚡Render '*' Route Handler", value: "render_method" },
-  { name: "⚙️Tests", checked: true, value: "tests" },
-  { name: "⚙️Add Axios Service Wrapper", value: "axios" },
-  { name: "⚙️Git Repo", value: "git" },
+  { title: "⚡Typescript", selected: true, value: "typescript" },
+  {
+    title: "⚡Auth",
+    description: "Add Middleware & Controller to handle Auth (token based)",
+    value: "auth_middleware",
+  },
+  {
+    title: "⚡Client Render",
+    description: "Node.js responsible for rendering '*' route",
+    value: "render_method",
+  },
+  { title: "⚙️Tests", selected: true, value: "tests" },
+  { title: "⚙️Axios Service Wrapper", value: "axios" },
+  { title: "⚙️Git Repo", value: "git" },
 ];
 
 // ==== STATIC =====
@@ -85,14 +100,14 @@ export interface StaticConfig {
 }
 
 export const staticWizardChoices = [
-  { name: "SASS", checked: true, value: "sass" },
-  { name: "JS", value: "javascript" },
-  { name: "Git Repo", value: "git" },
+  { title: "SASS", selected: true, value: "sass" },
+  { title: "JS", value: "javascript" },
+  { title: "Git Repo", value: "git" },
 ];
 export interface WizardConfig {
   defaultConfig?: DefaultArgOptions;
   reactConfig?: ReactConfig;
   nodeConfig?: NodeConfig;
   staticConfig?: StaticConfig;
-  isConfirmed: boolean;
+  status: WizardStatus;
 }

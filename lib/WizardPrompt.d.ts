@@ -8,6 +8,7 @@ export declare class WizardPrompt {
     private staticWizard;
     private fullstackWizard;
     private generateConfigFromAnswers;
+    private mapObjectValuesToChoices;
     private prompt;
-    get getConfig(): WizardConfig;
+    get getConfig(): WizardConfig | undefined;
 }

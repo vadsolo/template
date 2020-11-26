@@ -1,3 +1,9 @@
+export declare enum WizardStatus {
+    INIT = 0,
+    STARTED = 1,
+    ABORTED = 2,
+    COMPLETED = 3
+}
 export interface DefaultArgOptions {
     skipPrompts: boolean;
 }
@@ -33,13 +39,13 @@ export interface ReactConfig {
     state_management?: StateManagement;
 }
 export declare const reactWizardChoices: ({
-    name: string;
-    checked: boolean;
+    title: string;
+    selected: boolean;
     value: string;
 } | {
-    name: string;
+    title: string;
     value: string;
-    checked?: undefined;
+    selected?: undefined;
 })[];
 export declare enum RenderMethods {
     React = "Add React Build In Public folder",
@@ -54,13 +60,20 @@ export interface NodeConfig {
     render_method?: RenderMethods;
 }
 export declare const nodeWizardChoices: ({
-    name: string;
-    checked: boolean;
+    title: string;
+    selected: boolean;
     value: string;
+    description?: undefined;
 } | {
-    name: string;
+    title: string;
+    description: string;
     value: string;
-    checked?: undefined;
+    selected?: undefined;
+} | {
+    title: string;
+    value: string;
+    selected?: undefined;
+    description?: undefined;
 })[];
 export interface StaticConfig {
     sass?: boolean;
@@ -68,18 +81,18 @@ export interface StaticConfig {
     git?: boolean;
 }
 export declare const staticWizardChoices: ({
-    name: string;
-    checked: boolean;
+    title: string;
+    selected: boolean;
     value: string;
 } | {
-    name: string;
+    title: string;
     value: string;
-    checked?: undefined;
+    selected?: undefined;
 })[];
 export interface WizardConfig {
     defaultConfig?: DefaultArgOptions;
     reactConfig?: ReactConfig;
     nodeConfig?: NodeConfig;
     staticConfig?: StaticConfig;
-    isConfirmed: boolean;
+    status: WizardStatus;
 }

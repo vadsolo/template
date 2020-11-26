@@ -5,6 +5,12 @@ export async function cli(rawArgs: string[]) {
   const parser = new ArgParser(rawArgs);
   const wizard = new WizardPrompt(parser.getOptions);
   await wizard.startWizard();
-  // if wizard.getConfig.completed
+
+  const wizardConfig = wizard.getConfig;
+
+  if (!!wizardConfig) {
+    console.log(wizardConfig);
+  }
+  // if
   // const builder = new ProjectBuilder(wizard.getConfig)
 }

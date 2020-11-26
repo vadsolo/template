@@ -1,4 +1,5 @@
-import inquirer, { QuestionCollection } from "inquirer";
+import prompts, { PromptObject } from "prompts";
+
 import {
   DefaultArgOptions,
   ReactConfig,
@@ -12,12 +13,13 @@ import {
   RenderMethods,
   StateManagement,
   WizardConfig,
+  WizardStatus,
 } from "./Options";
 
 export class WizardPrompt {
   // #!TODO - interface for wizard options - arg options only a small part
   private config: WizardConfig = {
-    isConfirmed: false,
+    status: WizardStatus.INIT,
   };
 
   constructor(defaultOptions: DefaultArgOptions) {
@@ -26,12 +28,15 @@ export class WizardPrompt {
 
   async startWizard(): Promise<void> {
     // Step 1. General Web APP Selector
+
+    this.config.status = WizardStatus.STARTED;
+
     const { main_template } = await this.prompt({
-      type: "list",
+      type: "select",
       name: "main_template",
       message: "Please choose which project template to use",
-      choices: Object.values(GeneralTemplates),
-      default: GeneralTemplates.Fullstack,
+      choices: this.mapObjectValuesToChoices(GeneralTemplates),
+      initial: 1,
     });
 
     // Step 2. Generate Config Depending on template selected
@@ -53,26 +58,32 @@ export class WizardPrompt {
     }
 
     // TODO Step 3 - loggint out final setup - confirm to start
-    console.log(this.config);
-    const { isConfirmed } = await this.prompt({
-      type: "confirm",
-      name: "isConfirmed",
-      message: "Proceed?",
-    });
 
-    // Step 4. Set Wizard as Completed
-    this.config.isConfirmed = isConfirmed;
+    if (this.config.status != (WizardStatus.ABORTED as WizardStatus)) {
+      const { isConfirmed } = await this.prompt({
+        type: "toggle",
+        name: "isConfirmed",
+        message: "Can you confirm?",
+        initial: true,
+        active: "Yes",
+        inactive: "No",
+      });
 
+      if (isConfirmed) {
+        this.config.status = WizardStatus.COMPLETED;
+      }
+    }
     return;
   }
 
   private async reactWizard(): Promise<void> {
     // Get answers for additional React options
     const { react_answers } = await this.prompt({
-      type: "checkbox",
+      type: "multiselect",
       name: "react_answers",
       message: "React Additional Options",
-      choices: [...reactWizardChoices, new inquirer.Separator()],
+      choices: reactWizardChoices,
+      style: "emoji",
     });
 
     // Generate Config Object from propmpt answers
@@ -84,10 +95,10 @@ export class WizardPrompt {
 
     if (reactConfig.uikit) {
       const { ui_kit_answer } = await this.prompt({
-        type: "list",
+        type: "select",
         name: "ui_kit_answer",
         message: "✨Choose UI Kit you want to use",
-        choices: Object.values(UIKits),
+        choices: this.mapObjectValuesToChoices(UIKits),
       });
 
       reactConfig.uikit = ui_kit_answer;
@@ -97,10 +108,10 @@ export class WizardPrompt {
 
     if (reactConfig.state_management) {
       const { state_answer } = await this.prompt({
-        type: "list",
+        type: "select",
         name: "state_answer",
         message: "⚡Choose State Management Approach",
-        choices: Object.values(StateManagement),
+        choices: this.mapObjectValuesToChoices(StateManagement),
       });
 
       reactConfig.state_management = state_answer;
@@ -113,10 +124,10 @@ export class WizardPrompt {
   private async nodejsWizard(): Promise<void> {
     // Get answers for additional NodeJS options
     const { node_answers } = await this.prompt({
-      type: "checkbox",
+      type: "multiselect",
       name: "node_answers",
       message: "Please choose Nodejs additional options",
-      choices: [...nodeWizardChoices, new inquirer.Separator()],
+      choices: nodeWizardChoices,
     });
 
     // Generate Config Object from propmpt answers
@@ -124,10 +135,10 @@ export class WizardPrompt {
 
     if (!!nodeConfig.render_method) {
       const { render_answer } = await this.prompt({
-        type: "list",
+        type: "select",
         name: "render_answer",
         message: "How NodeJS should handle * render route",
-        choices: Object.values(RenderMethods),
+        choices: this.mapObjectValuesToChoices(RenderMethods),
       });
       nodeConfig.render_method = render_answer;
     }
@@ -138,10 +149,10 @@ export class WizardPrompt {
   private async staticWizard(): Promise<void> {
     // Get answers for additional NodeJS options
     const { static_answers } = await this.prompt({
-      type: "checkbox",
+      type: "multiselect",
       name: "static_answers",
       message: "Please choose Static Web Site additional options",
-      choices: [...staticWizardChoices, new inquirer.Separator()],
+      choices: staticWizardChoices,
     });
 
     // Generate Config Object from propmpt answers
@@ -160,6 +171,7 @@ export class WizardPrompt {
     // Maybe Some Additional Fullstack Settings
   }
 
+  //  ===== UTILS ======
   private generateConfigFromAnswers(
     answers: string[]
   ): ReactConfig | NodeConfig | StaticConfig {
@@ -169,11 +181,32 @@ export class WizardPrompt {
     }, {});
   }
 
-  private prompt(questions: QuestionCollection) {
-    return inquirer.prompt(questions);
+  private mapObjectValuesToChoices(target: {
+    [key: string]: string;
+  }): { title: string; value: string }[] {
+    return Object.values(target).map((value) => ({
+      title: value,
+      value,
+    }));
   }
 
+  private prompt(questions: PromptObject) {
+    return prompts(
+      { ...questions, instructions: false },
+      {
+        onCancel: () => {
+          this.config.status = WizardStatus.ABORTED;
+          process.exit();
+        },
+      }
+    );
+  }
+
+  // ===== PUBLIC API ======
+
   get getConfig() {
-    return this.config;
+    return this.config.status === WizardStatus.COMPLETED
+      ? this.config
+      : undefined;
   }
 }
