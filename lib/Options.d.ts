@@ -48,8 +48,8 @@ export declare const reactWizardChoices: ({
     selected?: undefined;
 })[];
 export declare enum RenderMethods {
-    React = "Add React Build In Public folder",
-    Static = "Static HTML render in public folder"
+    React = "Serving Built React App from Public folder",
+    Static = "Service Static HTML from public folder"
 }
 export interface NodeConfig {
     typescript?: boolean;

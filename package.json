@@ -10,7 +10,8 @@
     "access": "public"
   },
   "scripts": {
-    "prepack": "rimraf lib && tsc -b"
+    "prepack": "rimraf lib && tsc -b",
+    "pub": "npm version patch && npm run prepack && npm publish"
   },
   "author": "vadsolo",
   "license": "ISC",
