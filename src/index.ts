@@ -6,10 +6,10 @@ export async function cli(rawArgs: string[]) {
   const wizard = new WizardPrompt(parser.getOptions);
   await wizard.startWizard();
 
-  const wizardConfig = wizard.getConfig;
+  const config = wizard.getConfig;
 
-  if (!!wizardConfig) {
-    console.log(wizardConfig);
+  if (!!config) {
+    console.log(config);
   }
   // if
   // const builder = new ProjectBuilder(wizard.getConfig)

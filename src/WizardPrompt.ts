@@ -17,7 +17,6 @@ import {
 } from "./Options";
 
 export class WizardPrompt {
-  // #!TODO - interface for wizard options - arg options only a small part
   private config: WizardConfig = {
     status: WizardStatus.INIT,
   };
@@ -57,7 +56,7 @@ export class WizardPrompt {
         break;
     }
 
-    // TODO Step 3 - loggint out final setup - confirm to start
+    // Step 3 - confirm to start
 
     if (this.config.status != (WizardStatus.ABORTED as WizardStatus)) {
       const { isConfirmed } = await this.prompt({
@@ -168,7 +167,7 @@ export class WizardPrompt {
     await this.reactWizard();
     await this.nodejsWizard();
 
-    // Maybe Some Additional Fullstack Settings
+    // Maybe Some Additional Fullstack Settings In The Future
   }
 
   //  ===== UTILS ======
